@@ -1,9 +1,9 @@
 <?php
 // FPP ESP32 NeoPixel Contact Closure Plugin - Status Viewer
 
-$logFile = "/home/fpp/media/logs/esp32_neopixel_contact.log";
-$configFile = "/home/fpp/media/config/esp32_neopixel_contact.conf";
-$contactCountFile = "/home/fpp/media/config/esp32_neopixel_contact_count.txt";
+$logFile = "/home/fpp/media/logs/contact_clsr_fpp.log";
+$configFile = "/home/fpp/media/config/contact_clsr_fpp.conf";
+$contactCountFile = "/home/fpp/media/config/contact_clsr_fpp_count.txt";
 
 if (isset($_POST['clear_log'])) {
     if (file_exists($logFile)) {

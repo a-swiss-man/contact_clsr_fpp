@@ -4,9 +4,9 @@
 # This script handles FPP events and sends commands to the ESP32.
 
 # Log file
-LOG_FILE="/home/fpp/media/logs/esp32_neopixel_contact.log"
-CONFIG_FILE="/home/fpp/media/config/esp32_neopixel_contact.conf"
-CONTACT_COUNT_FILE="/home/fpp/media/config/esp32_neopixel_contact_count.txt"
+LOG_FILE="/home/fpp/media/logs/contact_clsr_fpp.log"
+CONFIG_FILE="/home/fpp/media/config/contact_clsr_fpp.conf"
+CONTACT_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_count.txt"
 
 # Function to log messages
 log_message() {

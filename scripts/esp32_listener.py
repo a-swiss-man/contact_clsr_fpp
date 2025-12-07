@@ -13,9 +13,9 @@ import serial
 import glob
 from datetime import datetime
 
-PLUGIN_DIR = "/home/fpp/media/plugins/esp32_neopixel_contact"
+PLUGIN_DIR = "/home/fpp/media/plugins/contact_clsr_fpp"
 CALLBACKS_SCRIPT = os.path.join(PLUGIN_DIR, "callbacks.sh")
-LOG_FILE = "/home/fpp/media/logs/esp32_neopixel_contact.log"
+LOG_FILE = "/home/fpp/media/logs/contact_clsr_fpp.log"
 LISTENER_PORT = 8081  # Port to listen on for ESP32 messages
 
 # Neo Trinkey USB serial device (will be auto-detected)

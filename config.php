@@ -1,9 +1,9 @@
 <?php
 // FPP ESP32 NeoPixel Contact Closure Plugin - Configuration
 
-$configFile = "/home/fpp/media/config/esp32_neopixel_contact.conf";
-$logFile = "/home/fpp/media/logs/esp32_neopixel_contact.log";
-$contactCountFile = "/home/fpp/media/config/esp32_neopixel_contact_count.txt";
+$configFile = "/home/fpp/media/config/contact_clsr_fpp.conf";
+$logFile = "/home/fpp/media/logs/contact_clsr_fpp.log";
+$contactCountFile = "/home/fpp/media/config/contact_clsr_fpp_count.txt";
 
 // Ensure config directory exists
 $configDir = dirname($configFile);
@@ -56,7 +56,7 @@ if (isset($_POST['save_config'])) {
     }
     
     // Save configuration
-    $config = "[esp32_neopixel_contact]\n";
+    $config = "[contact_clsr_fpp]\n";
     $config .= "esp32_ip = " . ($esp32IP ? $esp32IP : "") . "\n";
     $config .= "esp32_port = $esp32Port\n";
     

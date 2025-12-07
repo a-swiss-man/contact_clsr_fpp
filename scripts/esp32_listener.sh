@@ -3,9 +3,9 @@
 # ESP32 Message Listener
 # This script is a wrapper that calls the Python listener for better reliability
 
-PLUGIN_DIR="/home/fpp/media/plugins/esp32_neopixel_contact"
+PLUGIN_DIR="/home/fpp/media/plugins/contact_clsr_fpp"
 PYTHON_LISTENER="$PLUGIN_DIR/scripts/esp32_listener.py"
-LOG_FILE="/home/fpp/media/logs/esp32_neopixel_contact.log"
+LOG_FILE="/home/fpp/media/logs/contact_clsr_fpp.log"
 
 # Function to log messages
 log_message() {

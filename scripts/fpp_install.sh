@@ -34,7 +34,7 @@ mkdir -p /home/fpp/media/config
 chmod 755 /home/fpp/media/config
 
 # Create contact count file
-CONTACT_COUNT_FILE="/home/fpp/media/config/esp32_neopixel_contact_count.txt"
+CONTACT_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_count.txt"
 touch "$CONTACT_COUNT_FILE"
 chmod 666 "$CONTACT_COUNT_FILE"
 echo "0" > "$CONTACT_COUNT_FILE"

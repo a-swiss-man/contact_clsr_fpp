@@ -5,7 +5,7 @@
 
 echo "Uninstalling ESP32 NeoPixel Contact Closure Plugin..."
 
-PLUGIN_DIR="/home/fpp/media/plugins/esp32_neopixel_contact"
+PLUGIN_DIR="/home/fpp/media/plugins/contact_clsr_fpp"
 SERVICE_NAME="esp32-listener.service"
 SYSTEMD_DIR="/etc/systemd/system"
 
@@ -43,9 +43,9 @@ echo ""
 echo "Uninstallation Complete."
 echo ""
 echo "Note: Configuration files and logs are preserved:"
-echo "  - Config: /home/fpp/media/config/esp32_neopixel_contact.conf"
-echo "  - Log: /home/fpp/media/logs/esp32_neopixel_contact.log"
-echo "  - Contact Count: /home/fpp/media/config/esp32_neopixel_contact_count.txt"
+echo "  - Config: /home/fpp/media/config/contact_clsr_fpp.conf"
+echo "  - Log: /home/fpp/media/logs/contact_clsr_fpp.log"
+echo "  - Contact Count: /home/fpp/media/config/contact_clsr_fpp_count.txt"
 echo ""
 echo "To completely remove, manually delete these files if desired."
 
