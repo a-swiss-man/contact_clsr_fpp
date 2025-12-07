@@ -4,9 +4,9 @@
   "author": "FPP User",
   "version": "0.0.1",
   "description": "ESP32 S3 ETH based contact closure input that triggers NeoPixel status changes via Ethernet communication.",
-  "homeURL": "",
-  "srcURL": "",
-  "bugURL": "",
+  "homeURL": "https://github.com/a-swiss-man/contact_clsr_fpp",
+  "srcURL": "https://github.com/a-swiss-man/contact_clsr_fpp.git",
+  "bugURL": "https://github.com/a-swiss-man/contact_clsr_fpp/issues",
   "allowUpdates": 1,
   "versions": [
     {

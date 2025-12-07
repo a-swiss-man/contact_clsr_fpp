@@ -32,9 +32,8 @@ else
             count=$(echo "$message" | cut -d':' -f2)
             log_message "Contact closure detected, count: $count"
             "$CALLBACKS_SCRIPT" contact "$count"
-        elif [[ "$message" =~ ^STATUS: ]]; then
-            status=$(echo "$message" | cut -d':' -f2)
-            log_message "ESP32 status update: $status"
+        else
+            log_message "Unknown message format: $message"
         fi
     }
     
