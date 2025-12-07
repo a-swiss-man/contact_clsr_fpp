@@ -14,6 +14,24 @@ if (isset($_POST['clear_log'])) {
     }
 }
 
+// Handle reset trinkey
+if (isset($_POST['reset_trinkey'])) {
+    $pluginDir = "/home/fpp/media/plugins/contact_clsr_fpp";
+    $resetScript = "$pluginDir/scripts/reset_trinkey.py";
+    $output = [];
+    $returnVar = 0;
+    exec("python3 $resetScript 2>&1", $output, $returnVar);
+    if ($returnVar === 0) {
+        echo "<script>$.jGrowl('Neo Trinkey reset (turned off)');</script>";
+        $timestamp = date('Y-m-d H:i:s');
+        file_put_contents($logFile, "$timestamp - [UI] Reset Trinkey requested\n", FILE_APPEND);
+    } else {
+        echo "<script>$.jGrowl('Error resetting Neo Trinkey. Check logs for details.', {life: 5000});</script>";
+        $timestamp = date('Y-m-d H:i:s');
+        file_put_contents($logFile, "$timestamp - [UI] Reset Trinkey failed: " . implode("\n", $output) . "\n", FILE_APPEND);
+    }
+}
+
 $logContent = "";
 if (file_exists($logFile)) {
     $logContent = file_get_contents($logFile);
@@ -69,6 +87,10 @@ if ($lastDate == $currentDate && file_exists($dailyCountFile)) {
                 <td style="padding: 5px;"><code><?php echo $logFile; ?></code></td>
             </tr>
         </table>
+        <form method="post" action="" style="margin: 10px 0;">
+            <input type="submit" name="reset_trinkey" value="Reset Trinkey (Turn Off)" class="buttons" 
+                   onclick="return confirm('Are you sure you want to reset the Neo Trinkey (turn it off)?');">
+        </form>
     </fieldset>
 
     <fieldset>
