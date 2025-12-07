@@ -6,7 +6,9 @@
 # Log file
 LOG_FILE="/home/fpp/media/logs/contact_clsr_fpp.log"
 CONFIG_FILE="/home/fpp/media/config/contact_clsr_fpp.conf"
-CONTACT_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_count.txt"
+TOTAL_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_total.txt"
+DAILY_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_daily.txt"
+DAILY_DATE_FILE="/home/fpp/media/config/contact_clsr_fpp_daily_date.txt"
 
 # Function to log messages
 log_message() {
@@ -18,23 +20,63 @@ log_message "callbacks.sh executed with args: $@"
 
 
 
-# Function to increment contact count
-increment_contact_count() {
-    local current_count=0
-    if [ -f "$CONTACT_COUNT_FILE" ]; then
-        current_count=$(cat "$CONTACT_COUNT_FILE" 2>/dev/null || echo "0")
-        current_count=$((current_count + 0))  # Ensure it's a number
+# Function to check and reset daily count if needed
+check_daily_reset() {
+    local today=$(date '+%Y-%m-%d')
+    local last_date=""
+    
+    if [ -f "$DAILY_DATE_FILE" ]; then
+        last_date=$(cat "$DAILY_DATE_FILE" 2>/dev/null || echo "")
     fi
-    current_count=$((current_count + 1))
-    echo "$current_count" > "$CONTACT_COUNT_FILE"
-    log_message "Contact closure count incremented to $current_count"
-    echo "$current_count"
+    
+    if [ "$last_date" != "$today" ]; then
+        # New day - reset daily count
+        echo "0" > "$DAILY_COUNT_FILE"
+        echo "$today" > "$DAILY_DATE_FILE"
+        log_message "Daily count reset for new day: $today"
+    fi
 }
 
-# Function to reset contact count
-reset_contact_count() {
-    echo "0" > "$CONTACT_COUNT_FILE"
-    log_message "Contact closure count reset to 0"
+# Function to increment contact count (both daily and total)
+increment_contact_count() {
+    # Check if we need to reset daily count
+    check_daily_reset
+    
+    # Increment total count
+    local total_count=0
+    if [ -f "$TOTAL_COUNT_FILE" ]; then
+        total_count=$(cat "$TOTAL_COUNT_FILE" 2>/dev/null || echo "0")
+        total_count=$((total_count + 0))  # Ensure it's a number
+    fi
+    total_count=$((total_count + 1))
+    echo "$total_count" > "$TOTAL_COUNT_FILE"
+    
+    # Increment daily count
+    local daily_count=0
+    if [ -f "$DAILY_COUNT_FILE" ]; then
+        daily_count=$(cat "$DAILY_COUNT_FILE" 2>/dev/null || echo "0")
+        daily_count=$((daily_count + 0))  # Ensure it's a number
+    fi
+    daily_count=$((daily_count + 1))
+    echo "$daily_count" > "$DAILY_COUNT_FILE"
+    
+    local today=$(date '+%Y-%m-%d')
+    log_message "Box opened - Daily: $daily_count, Total: $total_count (Date: $today)"
+    echo "$total_count"
+}
+
+# Function to reset daily count
+reset_daily_count() {
+    echo "0" > "$DAILY_COUNT_FILE"
+    local today=$(date '+%Y-%m-%d')
+    echo "$today" > "$DAILY_DATE_FILE"
+    log_message "Daily count reset to 0"
+}
+
+# Function to reset total count
+reset_total_count() {
+    echo "0" > "$TOTAL_COUNT_FILE"
+    log_message "Total count reset to 0"
 }
 
 # Arguments:
@@ -48,13 +90,22 @@ log_message "Event received: Type=$TYPE, Action=$ACTION"
 
 case "$TYPE" in
     "contact")
-        # Contact closure event from ESP32 listener
-        # ACTION contains the count
+        # Contact closure event from ESP32 listener (box opened)
+        # ACTION contains the count (from ESP32, but we track our own)
         increment_contact_count
         ;;
+    "reset_daily")
+        # Reset daily count
+        reset_daily_count
+        ;;
+    "reset_total")
+        # Reset total count
+        reset_total_count
+        ;;
     "reset")
-        # Reset contact count
-        reset_contact_count
+        # Reset both daily and total counts
+        reset_daily_count
+        reset_total_count
         ;;
     *)
         # Default or unknown event

@@ -33,11 +33,22 @@ chmod 666 "$LOG_FILE"
 mkdir -p /home/fpp/media/config
 chmod 755 /home/fpp/media/config
 
-# Create contact count file
-CONTACT_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_count.txt"
-touch "$CONTACT_COUNT_FILE"
-chmod 666 "$CONTACT_COUNT_FILE"
-echo "0" > "$CONTACT_COUNT_FILE"
+# Create count files
+TOTAL_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_total.txt"
+DAILY_COUNT_FILE="/home/fpp/media/config/contact_clsr_fpp_daily.txt"
+DAILY_DATE_FILE="/home/fpp/media/config/contact_clsr_fpp_daily_date.txt"
+
+touch "$TOTAL_COUNT_FILE"
+chmod 666 "$TOTAL_COUNT_FILE"
+echo "0" > "$TOTAL_COUNT_FILE"
+
+touch "$DAILY_COUNT_FILE"
+chmod 666 "$DAILY_COUNT_FILE"
+echo "0" > "$DAILY_COUNT_FILE"
+
+touch "$DAILY_DATE_FILE"
+chmod 666 "$DAILY_DATE_FILE"
+echo "$(date '+%Y-%m-%d')" > "$DAILY_DATE_FILE"
 
 # Set up systemd service for ESP32 listener
 SERVICE_FILE="$PLUGIN_DIR/scripts/esp32-listener.service"
@@ -106,9 +117,9 @@ echo ""
 echo "Installation Complete."
 echo ""
 echo "Plugin Functionality:"
-echo "  - ESP32 sends contact closure events to FPP"
-echo "  - FPP listener triggers Neo Trinkey rainbow chase effect"
-echo "  - Contact count is tracked in: $CONTACT_COUNT_FILE"
+echo "  - ESP32 monitors food donation box door (contact closure)"
+echo "  - FPP listener triggers Neo Trinkey rainbow chase effect when box opens"
+echo "  - Daily and total open counts are tracked automatically"
 echo ""
 echo "IMPORTANT - After installation:"
 echo "  1. RESTART FPPD: sudo systemctl restart fppd"

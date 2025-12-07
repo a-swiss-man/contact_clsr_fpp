@@ -3,7 +3,9 @@
 
 $logFile = "/home/fpp/media/logs/contact_clsr_fpp.log";
 $configFile = "/home/fpp/media/config/contact_clsr_fpp.conf";
-$contactCountFile = "/home/fpp/media/config/contact_clsr_fpp_count.txt";
+$totalCountFile = "/home/fpp/media/config/contact_clsr_fpp_total.txt";
+$dailyCountFile = "/home/fpp/media/config/contact_clsr_fpp_daily.txt";
+$dailyDateFile = "/home/fpp/media/config/contact_clsr_fpp_daily_date.txt";
 
 if (isset($_POST['clear_log'])) {
     if (file_exists($logFile)) {
@@ -28,19 +30,45 @@ if (file_exists($configFile)) {
     }
 }
 
-$currentContactCount = 0;
-if (file_exists($contactCountFile)) {
-    $currentContactCount = intval(file_get_contents($contactCountFile));
+// Get counts
+$currentTotalCount = 0;
+if (file_exists($totalCountFile)) {
+    $currentTotalCount = intval(file_get_contents($totalCountFile));
+}
+
+$currentDailyCount = 0;
+$currentDate = date('Y-m-d');
+$lastDate = "";
+if (file_exists($dailyDateFile)) {
+    $lastDate = trim(file_get_contents($dailyDateFile));
+}
+if ($lastDate == $currentDate && file_exists($dailyCountFile)) {
+    $currentDailyCount = intval(file_get_contents($dailyCountFile));
 }
 ?>
 
 <div id="esp32_neopixel_status" class="settings">
     <fieldset>
-        <legend>ESP32 NeoPixel Contact Closure - Status</legend>
-        <p>This plugin communicates with an ESP32 S3 ETH device via Ethernet to handle contact closure inputs. When a contact closure is detected, it triggers the Neo Trinkey to display a rainbow chase effect.</p>
-        <p><b>Current ESP32 IP:</b> <code><?php echo htmlspecialchars($currentIP); ?></code></p>
-        <p><b>Contact Closure Count:</b> <code><?php echo $currentContactCount; ?></code></p>
-        <p><b>Log File:</b> <code><?php echo $logFile; ?></code></p>
+        <legend>Food Donation Box - Status</legend>
+        <p>This plugin monitors a food donation box using an ESP32 S3 ETH device. When the box door is opened, it triggers the Neo Trinkey to display a rainbow chase effect and logs the event.</p>
+        <table style="width: 100%; margin: 10px 0;">
+            <tr>
+                <td style="padding: 5px;"><b>Current ESP32 IP:</b></td>
+                <td style="padding: 5px;"><code><?php echo htmlspecialchars($currentIP); ?></code></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><b>Today's Opens (<?php echo $currentDate; ?>):</b></td>
+                <td style="padding: 5px;"><code style="font-size: 18px;"><?php echo $currentDailyCount; ?></code></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><b>Total Opens (All Time):</b></td>
+                <td style="padding: 5px;"><code style="font-size: 18px;"><?php echo $currentTotalCount; ?></code></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><b>Log File:</b></td>
+                <td style="padding: 5px;"><code><?php echo $logFile; ?></code></td>
+            </tr>
+        </table>
     </fieldset>
 
     <fieldset>

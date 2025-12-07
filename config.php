@@ -3,7 +3,9 @@
 
 $configFile = "/home/fpp/media/config/contact_clsr_fpp.conf";
 $logFile = "/home/fpp/media/logs/contact_clsr_fpp.log";
-$contactCountFile = "/home/fpp/media/config/contact_clsr_fpp_count.txt";
+$totalCountFile = "/home/fpp/media/config/contact_clsr_fpp_total.txt";
+$dailyCountFile = "/home/fpp/media/config/contact_clsr_fpp_daily.txt";
+$dailyDateFile = "/home/fpp/media/config/contact_clsr_fpp_daily_date.txt";
 
 // Ensure config directory exists
 $configDir = dirname($configFile);
@@ -18,26 +20,59 @@ function log_message($message) {
     file_put_contents($logFile, "$timestamp - $message\n", FILE_APPEND);
 }
 
-// Function to get contact count
-function get_contact_count() {
-    global $contactCountFile;
-    if (file_exists($contactCountFile)) {
-        return intval(file_get_contents($contactCountFile));
+// Function to get total count
+function get_total_count() {
+    global $totalCountFile;
+    if (file_exists($totalCountFile)) {
+        return intval(file_get_contents($totalCountFile));
     }
     return 0;
 }
 
-// Function to set contact count
-function set_contact_count($count) {
-    global $contactCountFile;
-    file_put_contents($contactCountFile, strval($count));
+// Function to get daily count
+function get_daily_count() {
+    global $dailyCountFile, $dailyDateFile;
+    // Check if we need to reset daily count
+    $today = date('Y-m-d');
+    $lastDate = "";
+    if (file_exists($dailyDateFile)) {
+        $lastDate = trim(file_get_contents($dailyDateFile));
+    }
+    if ($lastDate != $today) {
+        // New day - reset daily count
+        file_put_contents($dailyCountFile, "0");
+        file_put_contents($dailyDateFile, $today);
+        return 0;
+    }
+    if (file_exists($dailyCountFile)) {
+        return intval(file_get_contents($dailyCountFile));
+    }
+    return 0;
 }
 
-// Handle reset contact count
-if (isset($_POST['reset_count'])) {
-    set_contact_count(0);
-    log_message("Contact count reset to 0");
-    echo "<script>$.jGrowl('Contact count reset');</script>";
+// Handle reset counts
+if (isset($_POST['reset_daily'])) {
+    $pluginDir = "/home/fpp/media/plugins/contact_clsr_fpp";
+    $callbackScript = "$pluginDir/callbacks.sh";
+    exec("$callbackScript reset_daily 2>&1");
+    log_message("Daily count reset requested");
+    echo "<script>$.jGrowl('Daily count reset');</script>";
+}
+
+if (isset($_POST['reset_total'])) {
+    $pluginDir = "/home/fpp/media/plugins/contact_clsr_fpp";
+    $callbackScript = "$pluginDir/callbacks.sh";
+    exec("$callbackScript reset_total 2>&1");
+    log_message("Total count reset requested");
+    echo "<script>$.jGrowl('Total count reset');</script>";
+}
+
+if (isset($_POST['reset_all'])) {
+    $pluginDir = "/home/fpp/media/plugins/contact_clsr_fpp";
+    $callbackScript = "$pluginDir/callbacks.sh";
+    exec("$callbackScript reset 2>&1");
+    log_message("All counts reset requested");
+    echo "<script>$.jGrowl('All counts reset');</script>";
 }
 
 // Handle form submission
@@ -86,7 +121,9 @@ if (file_exists($configFile)) {
     }
 }
 
-$currentContactCount = get_contact_count();
+$currentTotalCount = get_total_count();
+$currentDailyCount = get_daily_count();
+$currentDate = date('Y-m-d');
 
 // Load log content for display
 $logContent = "";
@@ -116,7 +153,7 @@ if (isset($_POST['clear_log'])) {
             </div>
         <?php endif; ?>
         
-        <p>Configure the IP address and port for your ESP32 S3 ETH device. The ESP32 will send contact closure events to FPP, which will trigger the Neo Trinkey to display a rainbow chase effect.</p>
+        <p>Configure the IP address and port for your ESP32 S3 ETH device. The ESP32 monitors the food donation box door and sends events to FPP when the box is opened, which triggers the Neo Trinkey to display a rainbow chase effect.</p>
         
         <form method="post" action="">
             <fieldset>
@@ -149,13 +186,26 @@ if (isset($_POST['clear_log'])) {
     </fieldset>
     
     <fieldset>
-        <legend>Contact Closure Statistics</legend>
-        <p><b>Total Contact Closures:</b> <code><?php echo $currentContactCount; ?></code></p>
+        <legend>Food Donation Box Statistics</legend>
+        <table style="width: 100%; margin: 10px 0;">
+            <tr>
+                <td style="padding: 5px;"><b>Today's Opens (<?php echo $currentDate; ?>):</b></td>
+                <td style="padding: 5px;"><code style="font-size: 18px;"><?php echo $currentDailyCount; ?></code></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><b>Total Opens (All Time):</b></td>
+                <td style="padding: 5px;"><code style="font-size: 18px;"><?php echo $currentTotalCount; ?></code></td>
+            </tr>
+        </table>
         <form method="post" action="" style="margin: 10px 0;">
-            <input type="submit" name="reset_count" value="Reset Count" class="buttons" 
-                   onclick="return confirm('Are you sure you want to reset the contact closure count?');">
+            <input type="submit" name="reset_daily" value="Reset Daily Count" class="buttons" 
+                   onclick="return confirm('Are you sure you want to reset today\'s count?');" style="margin-right: 5px;">
+            <input type="submit" name="reset_total" value="Reset Total Count" class="buttons" 
+                   onclick="return confirm('Are you sure you want to reset the total count?');" style="margin-right: 5px;">
+            <input type="submit" name="reset_all" value="Reset All" class="buttons" 
+                   onclick="return confirm('Are you sure you want to reset both daily and total counts?');">
         </form>
-        <p><small><i>Note: When a contact closure is detected, the Neo Trinkey will display a rainbow chase effect.</i></small></p>
+        <p><small><i>Note: Daily count automatically resets at midnight. When the box is opened, the Neo Trinkey displays a rainbow chase effect.</i></small></p>
     </fieldset>
     
     <fieldset>
