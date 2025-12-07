@@ -1,0 +1,18 @@
+[Unit]
+Description=ESP32 NeoPixel Contact Closure Listener
+After=network.target
+
+[Service]
+Type=simple
+User=fpp
+Group=fpp
+WorkingDirectory=/home/fpp/media/plugins/esp32_neopixel_contact
+ExecStart=/home/fpp/media/plugins/esp32_neopixel_contact/scripts/esp32_listener.sh
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/fpp/media/logs/esp32_neopixel_contact.log
+StandardError=append:/home/fpp/media/logs/esp32_neopixel_contact.log
+
+[Install]
+WantedBy=multi-user.target
+

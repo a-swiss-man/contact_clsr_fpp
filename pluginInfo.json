@@ -1,0 +1,20 @@
+{
+  "repoName": "esp32_neopixel_contact",
+  "name": "ESP32 NeoPixel Contact Closure",
+  "author": "FPP User",
+  "version": "0.0.1",
+  "description": "ESP32 S3 ETH based contact closure input that triggers NeoPixel status changes via Ethernet communication.",
+  "homeURL": "",
+  "srcURL": "",
+  "bugURL": "",
+  "allowUpdates": 1,
+  "versions": [
+    {
+      "minFPPVersion": "9.0",
+      "maxFPPVersion": "0",
+      "branch": "master",
+      "sha": ""
+    }
+  ]
+}
+
