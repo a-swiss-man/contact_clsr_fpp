@@ -9,9 +9,15 @@ import socket
 import subprocess
 import os
 import sys
-import serial
 import glob
 from datetime import datetime
+
+# Try to import serial, but make it optional
+try:
+    import serial
+    SERIAL_AVAILABLE = True
+except ImportError:
+    SERIAL_AVAILABLE = False
 
 PLUGIN_DIR = "/home/fpp/media/plugins/contact_clsr_fpp"
 CALLBACKS_SCRIPT = os.path.join(PLUGIN_DIR, "callbacks.sh")
@@ -38,13 +44,19 @@ def find_neotrinkey_device():
         devices = glob.glob(pattern)
         for device in devices:
             try:
-                # Try to open the device to see if it's accessible
-                ser = serial.Serial(device, 115200, timeout=1)
-                ser.close()
-                NEO_TRINKEY_DEVICE = device
-                log_message(f"Found Neo Trinkey at {device}")
-                return device
-            except (serial.SerialException, OSError, PermissionError):
+                # Check if device exists and is accessible
+                if os.path.exists(device) and os.access(device, os.W_OK):
+                    # Try to open it to verify it's a serial device
+                    if SERIAL_AVAILABLE:
+                        try:
+                            ser = serial.Serial(device, 115200, timeout=1)
+                            ser.close()
+                        except:
+                            continue
+                    NEO_TRINKEY_DEVICE = device
+                    log_message(f"Found Neo Trinkey at {device}")
+                    return device
+            except (OSError, PermissionError):
                 continue
     
     log_message("Warning: Neo Trinkey device not found. Will retry on next contact closure.")
@@ -63,13 +75,21 @@ def send_to_neotrinkey(command):
         return False
     
     try:
-        ser = serial.Serial(NEO_TRINKEY_DEVICE, 115200, timeout=1)
-        ser.write((command + '\n').encode('utf-8'))
-        ser.flush()
-        ser.close()
+        if SERIAL_AVAILABLE:
+            # Use serial library if available
+            ser = serial.Serial(NEO_TRINKEY_DEVICE, 115200, timeout=1)
+            ser.write((command + '\n').encode('utf-8'))
+            ser.flush()
+            ser.close()
+        else:
+            # Use direct file I/O if serial library not available
+            with open(NEO_TRINKEY_DEVICE, 'wb') as f:
+                f.write((command + '\n').encode('utf-8'))
+                f.flush()
+        
         log_message(f"Sent command '{command}' to Neo Trinkey")
         return True
-    except (serial.SerialException, OSError, PermissionError) as e:
+    except (OSError, PermissionError, IOError) as e:
         log_message(f"Error sending command to Neo Trinkey: {e}")
         # Reset device path so we try to find it again next time
         NEO_TRINKEY_DEVICE = None

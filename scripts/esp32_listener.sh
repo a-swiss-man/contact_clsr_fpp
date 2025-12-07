@@ -23,6 +23,27 @@ else
     LISTENER_PORT=8081
     CALLBACKS_SCRIPT="$PLUGIN_DIR/callbacks.sh"
     
+    # Find Neo Trinkey device
+    find_neotrinkey() {
+        for pattern in /dev/ttyACM* /dev/ttyUSB*; do
+            if [ -c "$pattern" ] 2>/dev/null && [ -w "$pattern" ] 2>/dev/null; then
+                echo "$pattern"
+                return 0
+            fi
+        done
+        return 1
+    }
+    
+    # Send command to Neo Trinkey
+    send_to_neotrinkey() {
+        local command="$1"
+        local device=$(find_neotrinkey)
+        if [ -n "$device" ]; then
+            echo -e "${command}\n" > "$device" 2>/dev/null && return 0
+        fi
+        return 1
+    }
+    
     # Process incoming message from ESP32
     process_message() {
         local message="$1"
@@ -31,6 +52,14 @@ else
         if [[ "$message" =~ ^CONTACT: ]]; then
             count=$(echo "$message" | cut -d':' -f2)
             log_message "Contact closure detected, count: $count"
+            
+            # Send rainbow command to Neo Trinkey
+            if send_to_neotrinkey "R"; then
+                log_message "Sent rainbow command to Neo Trinkey"
+            else
+                log_message "Warning: Could not send command to Neo Trinkey"
+            fi
+            
             "$CALLBACKS_SCRIPT" contact "$count"
         else
             log_message "Unknown message format: $message"
