@@ -5,10 +5,10 @@
 
 echo "Installing ESP32 NeoPixel Contact Closure Plugin..."
 
-PLUGIN_DIR="/home/fpp/media/plugins/esp32_neopixel_contact"
+PLUGIN_DIR="/home/fpp/media/plugins/contact_clsr_fpp"
 CALLBACKS_SCRIPT="$PLUGIN_DIR/callbacks.sh"
 LISTENER_SCRIPT="$PLUGIN_DIR/scripts/esp32_listener.sh"
-LOG_FILE="/home/fpp/media/logs/esp32_neopixel_contact.log"
+LOG_FILE="/home/fpp/media/logs/contact_clsr_fpp.log"
 
 # Ensure the callbacks script is executable
 chmod +x "$CALLBACKS_SCRIPT"
