@@ -9,13 +9,19 @@
 
 $menuEntries = Array(
 	Array(
-		'text' => 'ESP32 NeoPixel Contact - Configuration',
+		'text' => 'ESP32 Contact Closure - Configuration',
 		'type' => 'status',
 		'page' => 'config.php',
 		'wrap' => 1
 	),
 	Array(
-		'text' => 'ESP32 NeoPixel Contact - About',
+		'text' => 'ESP32 Contact Closure - Status',
+		'type' => 'status',
+		'page' => 'status.php',
+		'wrap' => 1
+	),
+	Array(
+		'text' => 'ESP32 Contact Closure - About',
 		'type' => 'help',
 		'page' => 'help/about.php',
 		'wrap' => 1
