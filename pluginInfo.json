@@ -2,7 +2,7 @@
   "repoName": "contact_clsr_fpp",
   "name": "ESP32 Contact Closure to Neo Trinkey",
   "author": "FPP User",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ESP32 S3 ETH contact closure input that triggers Neo Trinkey rainbow chase effect via FPP.",
   "homeURL": "https://github.com/a-swiss-man/contact_clsr_fpp",
   "srcURL": "https://github.com/a-swiss-man/contact_clsr_fpp.git",
