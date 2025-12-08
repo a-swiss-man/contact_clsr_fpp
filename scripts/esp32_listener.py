@@ -117,6 +117,10 @@ def process_message(message):
             subprocess.run([CALLBACKS_SCRIPT, "contact", count], check=True)
         except subprocess.CalledProcessError as e:
             log_message(f"Error calling callback script: {e}")
+    elif message.startswith("TRINKEY:OFF"):
+        # Turn off Trinkey command
+        log_message("Received TRINKEY:OFF command")
+        send_to_neotrinkey("O")
     else:
         log_message(f"Unknown message format: {message}")
 
